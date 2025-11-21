@@ -117,20 +117,45 @@ std::vector<Dosis> HorarioGenerator::generarHorario(int dias) {
         return horario;
     }
     
+    // Mapa: medicamento -> última hora real en que se tomó (incluye desplazamientos)
+    // Inicializar con -1 para indicar que aún no se ha tomado ninguna dosis
+    std::map<std::string, int> ultimaHoraReal;
+    for (const auto& med : medicamentos) {
+        ultimaHoraReal[med.getNombre()] = -1;
+    }
+    
     // Para cada día, generar el horario
     for (int dia = 0; dia < dias; ++dia) {
-        // Mapa: hora -> lista de medicamentos que deben tomarse a esa hora (originales)
+        // Mapa: hora -> lista de medicamentos que deben tomarse a esa hora (calculados desde hora real anterior)
         std::map<int, std::vector<std::string>> medicamentosPorHora;
         
         // Mapa: hora -> lista de medicamentos ya aceptados en esa hora (incluye movidos)
         std::map<int, std::vector<std::string>> medicamentosAceptadosPorHora;
         
         // Generar todas las dosis necesarias para este día según frecuencia
+        // Pero calcular desde la última hora real, no desde hora teórica
         for (const auto& med : medicamentos) {
             // Solo incluir si el medicamento aún está en tratamiento
             if (dia < med.getDuracion()) {
-                // Calcular las horas en que debe tomarse según su frecuencia
-                int hora = 0;
+                int horaInicio;
+                
+                // Si es el primer día o no se ha tomado ninguna dosis aún, empezar desde hora 0
+                if (dia == 0 || ultimaHoraReal[med.getNombre()] == -1) {
+                    horaInicio = 0;
+                } else {
+                    // Calcular desde la última hora real + frecuencia
+                    // Si la última hora fue del día anterior, ajustar
+                    horaInicio = ultimaHoraReal[med.getNombre()] + med.getFrecuencia();
+                    
+                    // Si la hora calculada es >= 24, significa que la siguiente dosis es del día siguiente
+                    // En ese caso, empezar desde hora 0 de este día
+                    if (horaInicio >= 24) {
+                        horaInicio = horaInicio % 24;
+                    }
+                }
+                
+                // Calcular las horas en que debe tomarse según su frecuencia, desde la hora real
+                int hora = horaInicio;
                 while (hora < 24) {
                     medicamentosPorHora[hora].push_back(med.getNombre());
                     hora += med.getFrecuencia();
@@ -161,6 +186,8 @@ std::vector<Dosis> HorarioGenerator::generarHorario(int dias) {
                 if (!verificarConflictoRecursivo(medicamentosAceptados, med)) {
                     medicamentosAceptados.push_back(med);
                     horario.push_back(Dosis(med, hora, dia));
+                    // Actualizar la última hora real de este medicamento
+                    ultimaHoraReal[med] = hora;
                 } else {
                     // Si hay conflicto, buscar siguiente hora disponible
                     int siguienteHora = hora + 1;
@@ -176,6 +203,8 @@ std::vector<Dosis> HorarioGenerator::generarHorario(int dias) {
                             // Agregar a la siguiente hora (tanto a aceptados como a pendientes)
                             medsEnSiguienteHora.push_back(med);
                             horario.push_back(Dosis(med, siguienteHora, dia));
+                            // Actualizar la última hora real de este medicamento
+                            ultimaHoraReal[med] = siguienteHora;
                             colocado = true;
                         } else {
                             siguienteHora++;
@@ -187,6 +216,8 @@ std::vector<Dosis> HorarioGenerator::generarHorario(int dias) {
                     if (!colocado) {
                         medicamentosAceptados.push_back(med);
                         horario.push_back(Dosis(med, hora, dia));
+                        // Actualizar la última hora real de este medicamento
+                        ultimaHoraReal[med] = hora;
                     }
                 }
             }

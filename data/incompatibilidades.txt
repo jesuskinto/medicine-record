@@ -1,0 +1,6 @@
+# Formato: Medicamento1 Medicamento2
+# Indica que estos dos medicamentos no deben tomarse al mismo tiempo
+Paracetamol Ibuprofeno
+Aspirina Ibuprofeno
+Amoxicilina Aspirina
+

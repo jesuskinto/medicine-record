@@ -1,0 +1,8 @@
+# Formato: Nombre Frecuencia(horas) Duracion(dias)
+# Ejemplo: Paracetamol 6 7
+Paracetamol 6 7
+Ibuprofeno 8 5
+Aspirina 12 3
+Amoxicilina 8 7
+Omeprazol 24 10
+

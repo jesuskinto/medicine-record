@@ -1,9 +1,9 @@
 HORARIO DE MEDICAMENTOS
 ======================
 
-Día 1, Hora 0:00: Paracetamol
 Día 1, Hora 0:00: Aspirina
 Día 1, Hora 0:00: Omeprazol
+Día 1, Hora 0:00: Paracetamol
 Día 1, Hora 1:00: Ibuprofeno
 Día 1, Hora 1:00: Amoxicilina
 Día 1, Hora 6:00: Paracetamol
@@ -41,8 +41,8 @@ Día 3, Hora 16:00: Ibuprofeno
 Día 3, Hora 16:00: Amoxicilina
 Día 3, Hora 18:00: Paracetamol
 Día 4, Hora 0:00: Paracetamol
-Día 4, Hora 0:00: Amoxicilina
 Día 4, Hora 0:00: Omeprazol
+Día 4, Hora 0:00: Amoxicilina
 Día 4, Hora 1:00: Ibuprofeno
 Día 4, Hora 6:00: Paracetamol
 Día 4, Hora 8:00: Ibuprofeno
@@ -78,3 +78,6 @@ Día 7, Hora 8:00: Amoxicilina
 Día 7, Hora 12:00: Paracetamol
 Día 7, Hora 16:00: Amoxicilina
 Día 7, Hora 18:00: Paracetamol
+Día 8, Hora 0:00: Omeprazol
+Día 9, Hora 0:00: Omeprazol
+Día 10, Hora 0:00: Omeprazol

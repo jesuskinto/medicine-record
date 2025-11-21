@@ -31,11 +31,13 @@ private slots:
 
 private:
     void actualizarTablaMedicamentos();
+    void actualizarTablaIncompatibilidades();
     void actualizarTablaHorario(const std::vector<Dosis>& horario);
     void limpiarTablas();
     
     HorarioGenerator* generador;
     QTableWidget* tablaMedicamentos;
+    QTableWidget* tablaIncompatibilidades;
     QTableWidget* tablaHorario;
     QPushButton* btnCargarMedicamentos;
     QPushButton* btnCargarIncompatibilidades;

@@ -40,16 +40,37 @@ MainWindow::MainWindow(QWidget *parent)
     
     mainLayout->addLayout(buttonLayout);
     
+    // Layout horizontal para tablas de medicamentos e incompatibilidades
+    QHBoxLayout* tablasLayout = new QHBoxLayout();
+    
     // Tabla de medicamentos
+    QVBoxLayout* medicamentosLayout = new QVBoxLayout();
     QLabel* labelMedicamentos = new QLabel("Medicamentos Cargados:", this);
-    mainLayout->addWidget(labelMedicamentos);
+    medicamentosLayout->addWidget(labelMedicamentos);
     
     tablaMedicamentos = new QTableWidget(this);
     tablaMedicamentos->setColumnCount(3);
     tablaMedicamentos->setHorizontalHeaderLabels(QStringList() << "Nombre" << "Frecuencia (horas)" << "Duración (días)");
     tablaMedicamentos->horizontalHeader()->setStretchLastSection(true);
     tablaMedicamentos->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    mainLayout->addWidget(tablaMedicamentos);
+    medicamentosLayout->addWidget(tablaMedicamentos);
+    
+    // Tabla de incompatibilidades
+    QVBoxLayout* incompatibilidadesLayout = new QVBoxLayout();
+    QLabel* labelIncompatibilidades = new QLabel("Incompatibilidades Cargadas:", this);
+    incompatibilidadesLayout->addWidget(labelIncompatibilidades);
+    
+    tablaIncompatibilidades = new QTableWidget(this);
+    tablaIncompatibilidades->setColumnCount(2);
+    tablaIncompatibilidades->setHorizontalHeaderLabels(QStringList() << "Medicamento 1" << "Medicamento 2");
+    tablaIncompatibilidades->horizontalHeader()->setStretchLastSection(true);
+    tablaIncompatibilidades->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    incompatibilidadesLayout->addWidget(tablaIncompatibilidades);
+    
+    // Añadir ambas tablas al layout horizontal
+    tablasLayout->addLayout(medicamentosLayout);
+    tablasLayout->addLayout(incompatibilidadesLayout);
+    mainLayout->addLayout(tablasLayout);
     
     // Tabla de horario
     QLabel* labelHorario = new QLabel("Horario Generado:", this);
@@ -108,6 +129,7 @@ void MainWindow::cargarIncompatibilidades() {
     archivoIncompatibilidades = fileName;
     
     if (generador->cargarIncompatibilidades(fileName.toStdString())) {
+        actualizarTablaIncompatibilidades();
         labelEstado->setText("Incompatibilidades cargadas correctamente");
         
         // Habilitar botón de generar si también hay medicamentos
@@ -198,6 +220,19 @@ void MainWindow::actualizarTablaMedicamentos() {
     }
 }
 
+void MainWindow::actualizarTablaIncompatibilidades() {
+    tablaIncompatibilidades->setRowCount(0);
+    
+    auto incompatibilidades = generador->getIncompatibilidades();
+    tablaIncompatibilidades->setRowCount(incompatibilidades.size());
+    
+    for (size_t i = 0; i < incompatibilidades.size(); ++i) {
+        const auto& inc = incompatibilidades[i];
+        tablaIncompatibilidades->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(inc.getMedicamento1())));
+        tablaIncompatibilidades->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(inc.getMedicamento2())));
+    }
+}
+
 void MainWindow::actualizarTablaHorario(const std::vector<Dosis>& horario) {
     tablaHorario->setRowCount(0);
     tablaHorario->setRowCount(horario.size());
@@ -212,6 +247,7 @@ void MainWindow::actualizarTablaHorario(const std::vector<Dosis>& horario) {
 
 void MainWindow::limpiarTablas() {
     tablaMedicamentos->setRowCount(0);
+    tablaIncompatibilidades->setRowCount(0);
     tablaHorario->setRowCount(0);
 }
 
